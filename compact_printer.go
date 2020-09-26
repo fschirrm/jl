@@ -37,7 +37,7 @@ type FieldFmt struct {
 // for most types of logs.
 var DefaultCompactPrinterFieldFmt = []FieldFmt{{
 	Name:         "level",
-	Finders: []FieldFinder{ByNames("level", "severity")},
+	Finders:      []FieldFinder{ByNames("level", "severity")},
 	Transformers: []Transformer{Truncate(4), UpperCase, ColorMap(LevelColors)},
 }, {
 	Name:    "time",
@@ -57,11 +57,35 @@ var DefaultCompactPrinterFieldFmt = []FieldFmt{{
 	Stringer: ErrorStringer,
 }}
 
+var DefaultCompactPrinterFieldFmtFs = []FieldFmt{{
+	Name:         "level",
+	Finders:      []FieldFinder{ByNames("level", "severity")},
+	Transformers: []Transformer{Truncate(4), UpperCase, ColorMap(LevelColors)},
+}, {
+	Name:         "service",
+	Finders:      []FieldFinder{ByNames("service")},
+	Transformers: []Transformer{toBlue},
+}, {
+	Name:         "sId",
+	Finders:      []FieldFinder{ByNames("sId")},
+	Transformers: []Transformer{toMagenta},
+}, {
+	Name:    "time",
+	Finders: []FieldFinder{ByNames("timestamp", "time")},
+}, {
+	Name:    "message",
+	Finders: []FieldFinder{ByNames("message", "msg", "textPayload", "jsonPayload.message")},
+}, {
+	Name:     "errors",
+	Finders:  []FieldFinder{LogrusErrorFinder, ByNames("exceptions", "exception", "error")},
+	Stringer: ErrorStringer,
+}}
+
 // NewCompactPrinter allocates and returns a new compact printer.
 func NewCompactPrinter(w io.Writer) *CompactPrinter {
 	return &CompactPrinter{
 		Out:          w,
-		FieldFormats: DefaultCompactPrinterFieldFmt,
+		FieldFormats: DefaultCompactPrinterFieldFmtFs,
 	}
 }
 

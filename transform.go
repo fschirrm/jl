@@ -29,11 +29,21 @@ func (f TransformFunc) Transform(ctx *Context, input string) string {
 	return f(input)
 }
 
+func colorBlue(input string) string {
+	return ColorText(Blue, input)
+}
+
+func colorMagenta(input string) string {
+	return ColorText(Magenta, input)
+}
+
 var (
 	// UpperCase transforms the input string to upper case.
 	UpperCase = TransformFunc(strings.ToUpper)
 	// LowerCase transforms the input string to lower case.
 	LowerCase = TransformFunc(strings.ToLower)
+	toBlue    = TransformFunc(colorBlue)
+	toMagenta = TransformFunc(colorMagenta)
 )
 
 // Truncate truncates the string to the a requested number of digits.
@@ -63,7 +73,7 @@ func (remain Ellipsize) Transform(ctx *Context, input string) string {
 	}
 	remain -= 1 // account for the ellipsis
 	chomped := length - int(remain)
-	start := int(remain)/2
+	start := int(remain) / 2
 	end := start + chomped
 	return input[:start] + "…" + input[end:]
 }
